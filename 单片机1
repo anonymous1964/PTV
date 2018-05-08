@@ -1,0 +1,184 @@
+#include<reg52.h>
+#define uchar unsigned char
+#define uint unsigned int 
+sbit led1g=P1^0;
+sbit led1b=P1^1;
+sbit led1r=P1^2;
+sbit led2g=P1^3;
+sbit led2b=P1^4;
+sbit led2r=P1^5;
+sbit led3g=P1^6;
+sbit led3b=P1^7;
+sbit led3r=P0^7;
+sbit fengmingqi1=P0^0;
+sbit fengmingqi2=P0^1;
+sbit fengmingqi3=P0^2;
+void delayms(uchar xms)
+{
+	uchar i,j;
+	for(i=xms;i>0;i--)
+		for(j=110;j>0;j--);
+}
+void afengmingqi1()	      //蜂鸣器1响
+{
+	 	fengmingqi1=0;
+		delayms(500);
+		fengmingqi1=1;
+		delayms(500);
+}
+void afengmingqi2()	      //蜂鸣器2响
+{
+	 	fengmingqi2=0;
+		delayms(500);
+		fengmingqi2=1;
+		delayms(500);
+}
+void afengmingqi3()	      //蜂鸣器3响
+{
+	 	fengmingqi3=0;
+		delayms(500);
+		fengmingqi3=1;
+		delayms(500);
+}
+void aled1r()		    //led1红色
+{
+	led1g=1;
+	led1b=1;
+	led1r=0;
+}
+void aled1g()   		//led1绿色
+{
+	led1g=0;
+	led1b=1;
+	led1r=1;
+}
+void aled1y()   		//led1黄色
+{
+	led1g=0;
+	led1b=1;
+	led1r=0;
+}
+void aled2r()		    //led2红色
+{
+	led2g=1;
+	led2b=1;
+	led2r=0;
+}
+void aled2g()   		//led2绿色
+{
+	led2g=0;
+	led2b=1;
+	led2r=1;
+}
+void aled2y()   		//led2黄色
+{
+	led2g=0;
+	led2b=1;
+	led2r=0;
+}
+void aled3r()		    //led3红色
+{
+	led3g=1;
+	led3b=1;
+	led3r=0;
+}
+void aled3g()   		//led3绿色
+{
+	led3g=0;
+	led3b=1;
+	led3r=1;
+}
+void aled3y()   		//led3黄色
+{
+	led3g=0;
+	led3b=1;
+	led3r=0;
+}
+void matrixkeyscan()		 //键盘
+{
+	uchar temp,key;
+	P2=0xfe;		   //第一行
+	temp=P2;
+	temp=temp&0xf0;
+	if(temp!=0xf0)
+	{
+		delayms(10);
+		temp=P2;
+		temp=temp&0xf0;
+		if(temp!=0xf0)
+		{
+			temp=P2;
+			switch(temp)
+			{
+				case 0xee:aled1r();break;	   //1.1
+				case 0xde:aled1g();break;	   //1.2
+				case 0xbe:aled1y();break;	   //1.3
+				case 0x7e:aled1r();break;	   //1.4
+			}
+			while(temp!=0xf0)
+			{
+				temp=P2;
+				temp=temp&0xf0;
+			}
+		}
+	}
+	P2=0xfd;	   //第二行
+	temp=P2;
+	temp=temp&0xf0;
+	if(temp!=0xf0)
+	{
+		delayms(10);
+		temp=P2;
+		temp=temp&0xf0;
+		if(temp!=0xf0)
+		{
+			temp=P2;
+			switch(temp)
+			{
+				case 0xed:aled2r();break;		//
+				case 0xdd:aled2g();break;	    //5
+				case 0xbd:aled2y();break;	    //8
+				case 0x7d:aled2r();break;		//11
+			}
+			while(temp!=0xf0)
+			{
+				temp=P2;
+				temp=temp&0xf0;
+			}
+		}
+	}
+	P2=0xfb;				 //第三行
+	temp=P2;
+	temp=temp&0xf0;
+	if(temp!=0xf0)
+	{
+		delayms(10);
+		temp=P2;
+		temp=temp&0xf0;
+		if(temp!=0xf0)
+		{
+			temp=P2;
+			switch(temp)
+			{
+				case 0xeb:aled3r();break;		     //3.1
+				case 0xdb:aled3g();break;		     //3.2
+				case 0xbb:aled3y();break;		     //3.3
+				case 0x7b:aled3r();break;			//3.4
+			}
+			while(temp!=0xf0)
+			{
+				temp=P2;
+				temp=temp&0xf0;
+			}
+		}
+	}
+}
+void main()
+{	
+	while(1)
+	{
+			
+	  matrixkeyscan();
+
+	}
+}
