@@ -1,0 +1,48 @@
+#include<reg52.h>
+#define uchar unsigned char
+#define uint unsigned int
+sbit beep=P3^6;
+sbit juli=P1^0;
+sbit guan=P2^0;
+uchar code table[]={
+0xc0,0xf9,0xa4,0xb0,
+0x99,0x92,0x82,0xf8,
+0x80,0x90,0x88,0x83,
+0xc6,0xa1,0x86,0x81
+};
+uchar num;
+uchar numt;
+void delay(uchar xms)
+{
+	unsigned char i,j;
+	for(i=xms;i>0;i--)
+	for(j=110;j>0;j--);
+}
+void main()
+{  	
+	uint num;
+	while(1)
+	{
+		if(juli==1)
+		{   
+			num++;
+			if(num==1)
+			{
+				numt++;
+				num=0;
+			}
+			if(numt==10)
+			{
+				numt=1;
+			}
+		   	guan=0;
+			P0=table[numt];
+			delay(500);
+
+			beep=0;
+			delay(100);
+			beep=1;
+		}
+
+	}
+}						  
