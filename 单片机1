@@ -1,39 +1,92 @@
 #include<reg52.h>
 #define uchar unsigned char
 #define uint unsigned int 
-sbit led1g=P1^0;
+sbit led1g=P1^0;				//乘务员铺1
 sbit led1b=P1^1;
 sbit led1r=P1^2;
-sbit led2g=P1^3;
+sbit led2g=P1^3;				 //乘务员铺2
 sbit led2b=P1^4;
 sbit led2r=P1^5;
-sbit led3g=P1^6;
+sbit led3g=P1^6;				 //乘务员铺3
 sbit led3b=P1^7;
 sbit led3r=P0^7;
-sbit fengmingqi1=P0^0;
-sbit fengmingqi2=P0^1;
-sbit fengmingqi3=P0^2;
+sbit fengmingqi1=P0^0;			  //乘客蜂鸣器1
+sbit fengmingqi2=P0^1;			  //乘客蜂鸣器2
+sbit fengmingqi3=P0^2;			  //乘客蜂鸣器3
+sbit beep=P3^6;	         		//蜂鸣器测试对射传感器 
+sbit juli=P3^2;		    		 //对射红外传感器
+sbit chengke1=P3^5;				//乘客1到达的车站，1为A站，0为B站
+sbit chengke2=P3^6;			    //乘客2到达的车站，1为A站，0为B站
+sbit chengke3=P3^7;			    //乘客3到达的车站，1为A站，0为B站
+uchar num=0;						     //距离车站公里数
+uchar chezhan=1;					//距离哪个车站
+uchar distance1;					//乘客1设置的提醒距离
+uchar distance2;					//乘客2设置的提醒距离
+uchar distance3;				   //乘客3设置的提醒 距离
+uchar final1;					   //计算所得乘客1该提醒地点
+uchar final2;					   //计算所得乘客2该提醒地点
+uchar final3;					   //计算所得乘客3该提醒地点
 void delayms(uchar xms)
 {
 	uchar i,j;
 	for(i=xms;i>0;i--)
 		for(j=110;j>0;j--);
 }
-void afengmingqi1()	      //蜂鸣器1响
+void cejumokuai()				 //小车行驶到哪个车站 
+{
+	if(juli==1)
+		{   
+			num++;
+			beep=0;
+			delay(100);
+			beep=1;
+		}	
+}
+void daozhanjisuan()		//乘客提醒地点计算
+{
+	 //乘客1该提醒地点
+	if(chengke1==1)		     
+	{
+		final1=0+distance1;
+	}
+	else
+	{
+		final1=3+distance1;
+	}
+	//乘客2该提醒地点
+	if(chengke2==1)
+	{
+		fina2=0+distance2;
+	}
+	else
+	{
+		fina2=3+distance2;
+	}
+	//乘客3该提醒地点
+	if(chengke3==1)
+	{
+		final3=0+distance3;
+	}
+	else
+	{
+		final3=3+distance3;
+	}
+}
+void afengmingqi1()	      //乘客蜂鸣器1响
 {
 	 	fengmingqi1=0;
 		delayms(500);
 		fengmingqi1=1;
 		delayms(500);
 }
-void afengmingqi2()	      //蜂鸣器2响
+void afengmingqi2()	      //乘客蜂鸣器2响
 {
 	 	fengmingqi2=0;
 		delayms(500);
 		fengmingqi2=1;
 		delayms(500);
 }
-void afengmingqi3()	      //蜂鸣器3响
+void afengmingqi3()	      //乘客蜂鸣器3响
 {
 	 	fengmingqi3=0;
 		delayms(500);
@@ -110,10 +163,10 @@ void matrixkeyscan()		 //键盘
 			temp=P2;
 			switch(temp)
 			{
-				case 0xee:aled1r();break;	   //1.1
-				case 0xde:aled1g();break;	   //1.2
-				case 0xbe:aled1y();break;	   //1.3
-				case 0x7e:aled1r();break;	   //1.4
+				case 0xee:distance1=1;break;	   //1.1设置提醒距离
+				case 0xde:distance1=2;;break;	   //1.2设置提醒距离
+				case 0xbe:distance1=3;;break;	   //1.3设置提醒距离
+				case 0x7e:fengmingqi1=0;break;	   //1.4关闭蜂鸣器
 			}
 			while(temp!=0xf0)
 			{
@@ -135,10 +188,10 @@ void matrixkeyscan()		 //键盘
 			temp=P2;
 			switch(temp)
 			{
-				case 0xed:aled2r();break;		//
-				case 0xdd:aled2g();break;	    //5
-				case 0xbd:aled2y();break;	    //8
-				case 0x7d:aled2r();break;		//11
+				case 0xed:distance2=1;break;		//2.1设置提醒距离
+				case 0xdd:distance2=2;break;	    //2.2设置提醒距离
+				case 0xbd:distance2=3;break;	    //2.3设置提醒距离
+				case 0x7d:fengmingqi2=0;break;		//2.4关闭蜂鸣器
 			}
 			while(temp!=0xf0)
 			{
@@ -160,10 +213,10 @@ void matrixkeyscan()		 //键盘
 			temp=P2;
 			switch(temp)
 			{
-				case 0xeb:aled3r();break;		     //3.1
-				case 0xdb:aled3g();break;		     //3.2
-				case 0xbb:aled3y();break;		     //3.3
-				case 0x7b:aled3r();break;			//3.4
+				case 0xeb:distance3=1;break;		     //3.1设置提醒距离
+				case 0xdb:distance3=2;break;		     //3.2设置提醒距离
+				case 0xbb:distance3=3;break;		     //3.3设置提醒距离
+				case 0x7b:fengmingqi3=0;break;			//3.4关闭蜂鸣器
 			}
 			while(temp!=0xf0)
 			{
@@ -173,12 +226,36 @@ void matrixkeyscan()		 //键盘
 		}
 	}
 }
+void daozhantixing()			   //乘客和乘务员提醒
+{
+	if(final1==num)
+	{
+		afengmingqi1();
+		aled1y();
+
+	}
+	if(final2==num)
+	{
+		afengmingqi2();
+		aled2y();
+	
+	}
+	if(final3==num)
+	{
+		afengmingqi3();
+		aled3y();
+	}
+}
 void main()
 {	
 	while(1)
 	{
 			
 	  matrixkeyscan();
+	  cejumokuai();
+	  daozhanjisuan();
+	  daozhantixing();
+
 
 	}
 }
