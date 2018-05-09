@@ -19,7 +19,6 @@ sbit chengke1=P3^5;				//乘客1到达的车站?
 sbit chengke2=P3^6;			    //乘客2到达的车站?
 sbit chengke3=P3^7;			    //乘客3到达的车站?
 uchar num=0;						     //距离车站公里数
-uchar chezhan=1;					//距离哪个车站
 uchar distance1;					//乘客1设置的提醒距离
 uchar distance2;					//乘客2设置的提醒距离
 uchar distance3;				   //乘客3设置的提醒 距离
@@ -260,36 +259,29 @@ void matrixkeyscan()		 //键盘
 				final3=0;
 				aled3();								   	//关闭乘客3灯
 			}
+			
 		}
 	}
 }
 void daozhantixing()			   //乘客和乘务员提醒
 {
-	if(final1!=0)
-	{
+
 	if(final1==num)
 	{
 		afengmingqi1();
 		aled1y();
 
 	}
-	}
-	if(final2!=0)
-	{
 	if(final2==num)
 	{
 		afengmingqi2();
 		aled2y();
 	
 	}
-	}
-	if(final3!=0)
-	{
 	if(final3==num)
 	{
 		afengmingqi3();
 		aled3y();
-	}
 	}
 }
 void main()
