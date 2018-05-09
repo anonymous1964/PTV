@@ -1,0 +1,215 @@
+#include<reg52.h>
+#define uchar unsigned char
+#define uint unsigned int 
+sbit juli=P2^4;
+sbit led=P1^4;
+sbit chengke1=P1^0;				//乘客1来没来
+sbit chengke2=P1^1;			    //乘客2来没来
+sbit chengke3=P1^2;			    //乘客3来没来
+sbit beep=P2^3;
+sbit dula=P2^6;
+sbit wela=P2^7;
+uchar code table[]={
+0x3f,0x06,0x5b,0x4f,
+0x66,0x6d,0x7d,0x07,
+0x7f,0x6f,0x77,0x7c,
+0x39,0x5e,0x79,0x71
+};
+
+uint num=0;
+uchar distance1;					//乘客1设置的提醒距离
+uchar distance2;					//乘客2设置的提醒距离
+uchar distance3;				   //乘客3设置的提醒 距离
+uchar final1;					   //计算所得乘客1该提醒地点
+uchar final2;					   //计算所得乘客2该提醒地点
+uchar final3;
+void delayms(uchar xms)
+{
+	uchar i,j;
+	for(i=xms;i>0;i--)
+		for(j=110;j>0;j--);
+}						
+void cejumokuai()				 //小车行驶到哪个车站 
+{
+	if(juli==1)
+		{   
+			num++;
+			
+		}	
+}
+void daozhanjisuan()		//乘客提醒地点计算
+{
+	 if(chengke1==1)
+	 {
+	 	final1=distance1;
+	 }
+	 else
+	 {
+	 	final1=-1;
+	 }
+	 if(chengke2==1)
+	 {
+	 	final2=3+distance2;
+	 }
+	 else
+	 {
+	 	final2=-1;
+	 }
+	 if(chengke3==1)
+	 {
+	 	final3=distance3;
+	 }
+	 else
+	 {
+	 	final3=-1;
+	 }
+	
+} 
+ void daozhantixing()			   //乘客和乘务员提醒
+{
+
+	P0=0;
+	dula=1;
+	P0=table[num];
+	dula=0;
+	P0=0xff;
+	wela=1;
+	P0=0xfe;
+	wela=0;
+	delayms(500);
+
+	P0=0;
+	dula=1;
+	P0=table[final3];
+	dula=0;
+	P0=0xff;
+	wela=1;
+	P0=0xfd;
+	wela=0;
+	delayms(500);
+ }
+void daozhantixing2()			   //乘客和乘务员提醒
+{
+   if(final1==num&&(num!=0))
+   {
+   	led=1;
+   }
+   else
+   {
+   	led=0;
+   }
+   if(final2==num&&(num!=0))
+   {
+   	led=1;
+	}
+	else
+	{
+		led=0;
+	}
+	if(final3==num&&(num!=0))
+   {
+   	led=1;
+   }
+   else
+   {
+   	led=0;
+   }
+}
+
+uchar matrixkeyscan()
+{
+	uchar temp;
+	P3=0xfe;
+	temp=P3;
+	temp=temp&0xf0;
+	if(temp!=0xf0)
+	{
+		delayms(10);
+		temp=P3;
+		temp=temp&0xf0;
+		if(temp!=0xf0)
+		{
+			temp=P3;
+			switch(temp)
+			{
+				case 0xee:distance1=1;break;
+				case 0xde:distance1=2;break;
+				case 0xbe:distance1=3;break;
+				
+			}
+			while(temp!=0xf0)
+			{
+				temp=P3;
+				temp=temp&0xf0;
+			}
+			return distance1;
+		}
+	}
+	P3=0xfd;
+	temp=P3;
+	temp=temp&0xf0;
+	if(temp!=0xf0)
+	{
+		delayms(10);
+		temp=P3;
+		temp=temp&0xf0;
+		if(temp!=0xf0)
+		{
+			temp=P3;
+			switch(temp)
+			{
+				case 0xed:distance2=1;break;
+				case 0xdd:distance2=2;break;
+				case 0xbd:distance2=3;break;
+				
+			}
+			while(temp!=0xf0)
+			{
+				temp=P3;
+				temp=temp&0xf0;
+			}
+			return distance2;
+		}
+	}
+	P3=0xfb;
+	temp=P3;
+	temp=temp&0xf0;
+	if(temp!=0xf0)
+	{
+		delayms(10);
+		temp=P3;
+		temp=temp&0xf0;
+		if(temp!=0xf0)
+		{
+			temp=P3;
+			switch(temp)
+			{
+				case 0xeb:distance3=1;break;
+				case 0xdb:distance3=2;break;
+				case 0xbb:distance3=3;break;
+			
+			}
+			while(temp!=0xf0)
+			{
+				temp=P3;
+				temp=temp&0xf0;
+			}
+			return distance3;
+			 
+		}
+	}
+
+
+}
+
+void main()
+{
+	while(1)
+	{
+	cejumokuai();
+	matrixkeyscan();
+	daozhanjisuan();
+	daozhantixing();
+	daozhantixing2();
+	}
+}
