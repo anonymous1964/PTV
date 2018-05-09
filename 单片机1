@@ -15,9 +15,9 @@ sbit fengmingqi2=P0^1;			  //乘客蜂鸣器2
 sbit fengmingqi3=P0^2;			  //乘客蜂鸣器3
 sbit beep=P3^6;	         		//蜂鸣器测试对射传感器 
 sbit juli=P3^2;		    		 //对射红外传感器
-sbit chengke1=P3^5;				//乘客1到达的车站，1为A站，0为B站
-sbit chengke2=P3^6;			    //乘客2到达的车站，1为A站，0为B站
-sbit chengke3=P3^7;			    //乘客3到达的车站，1为A站，0为B站
+sbit chengke1=P3^5;				//乘客1到达的车站?
+sbit chengke2=P3^6;			    //乘客2到达的车站?
+sbit chengke3=P3^7;			    //乘客3到达的车站?
 uchar num=0;						     //距离车站公里数
 uchar chezhan=1;					//距离哪个车站
 uchar distance1;					//乘客1设置的提醒距离
@@ -38,36 +38,36 @@ void cejumokuai()				 //小车行驶到哪个车站
 		{   
 			num++;
 			beep=0;
-			delay(100);
+			delayms(50);
 			beep=1;
 		}	
 }
 void daozhanjisuan()		//乘客提醒地点计算
 {
 	 //乘客1该提醒地点
-	if(chengke1==1)		     
+	if(chengke1==0)		     
 	{
 		final1=0+distance1;
 	}
-	else
+	if(chengke1==1)
 	{
 		final1=3+distance1;
 	}
 	//乘客2该提醒地点
+	if(chengke2==0)
+	{
+		final2=0+distance2;
+	}
 	if(chengke2==1)
 	{
-		fina2=0+distance2;
-	}
-	else
-	{
-		fina2=3+distance2;
+		final2=3+distance2;
 	}
 	//乘客3该提醒地点
-	if(chengke3==1)
+	if(chengke3==0)
 	{
 		final3=0+distance3;
 	}
-	else
+	if(chengke3==1)
 	{
 		final3=3+distance3;
 	}
@@ -111,6 +111,12 @@ void aled1y()   		//led1黄色
 	led1b=1;
 	led1r=0;
 }
+void aled1()			 //led1灭灯
+{
+	led1g=1;
+	led1b=1;
+	led1r=1;	
+}
 void aled2r()		    //led2红色
 {
 	led2g=1;
@@ -128,6 +134,12 @@ void aled2y()   		//led2黄色
 	led2g=0;
 	led2b=1;
 	led2r=0;
+}
+void aled2()			 //led2灭灯
+{
+	led2g=1;
+	led2b=1;
+	led2r=1;	
 }
 void aled3r()		    //led3红色
 {
@@ -147,6 +159,12 @@ void aled3y()   		//led3黄色
 	led3b=1;
 	led3r=0;
 }
+void aled3()			 //led3灭灯
+{
+	led3g=1;
+	led3b=1;
+	led3r=1;	
+}
 void matrixkeyscan()		 //键盘
 {
 	uchar temp,key;
@@ -164,14 +182,20 @@ void matrixkeyscan()		 //键盘
 			switch(temp)
 			{
 				case 0xee:distance1=1;break;	   //1.1设置提醒距离
-				case 0xde:distance1=2;;break;	   //1.2设置提醒距离
-				case 0xbe:distance1=3;;break;	   //1.3设置提醒距离
-				case 0x7e:fengmingqi1=0;break;	   //1.4关闭蜂鸣器
+				case 0xde:distance1=2;break;	   //1.2设置提醒距离
+				case 0xbe:distance1=3;break;	   //1.3设置提醒距离
+				case 0x7e:distance1=-1;break;	   //1.4关闭蜂鸣器
 			}
 			while(temp!=0xf0)
 			{
 				temp=P2;
 				temp=temp&0xf0;
+			}
+			if(distance1==-1)
+			{
+				fengmingqi1=1;  				//关闭蜂鸣器1
+				final1=0;
+				aled1();					   //关闭乘客1灯
 			}
 		}
 	}
@@ -191,13 +215,20 @@ void matrixkeyscan()		 //键盘
 				case 0xed:distance2=1;break;		//2.1设置提醒距离
 				case 0xdd:distance2=2;break;	    //2.2设置提醒距离
 				case 0xbd:distance2=3;break;	    //2.3设置提醒距离
-				case 0x7d:fengmingqi2=0;break;		//2.4关闭蜂鸣器
+				case 0x7d:distance2=-1;break;		//2.4关闭蜂鸣器
 			}
 			while(temp!=0xf0)
 			{
 				temp=P2;
 				temp=temp&0xf0;
 			}
+			if(distance2==-1)
+			{
+				fengmingqi2=1;	    					//关闭蜂鸣器2
+				final2=0;
+				aled2();								//关闭乘客2灯
+			}
+
 		}
 	}
 	P2=0xfb;				 //第三行
@@ -216,43 +247,57 @@ void matrixkeyscan()		 //键盘
 				case 0xeb:distance3=1;break;		     //3.1设置提醒距离
 				case 0xdb:distance3=2;break;		     //3.2设置提醒距离
 				case 0xbb:distance3=3;break;		     //3.3设置提醒距离
-				case 0x7b:fengmingqi3=0;break;			//3.4关闭蜂鸣器
+				case 0x7b:distance3=-1;break;			//3.4关闭蜂鸣器
 			}
 			while(temp!=0xf0)
 			{
 				temp=P2;
 				temp=temp&0xf0;
 			}
+			if(distance3==-1)
+			{
+				fengmingqi3=1;	    						//关闭蜂鸣器3
+				final3=0;
+				aled3();								   	//关闭乘客3灯
+			}
 		}
 	}
 }
 void daozhantixing()			   //乘客和乘务员提醒
 {
+	if(final1!=0)
+	{
 	if(final1==num)
 	{
 		afengmingqi1();
 		aled1y();
 
 	}
+	}
+	if(final2!=0)
+	{
 	if(final2==num)
 	{
 		afengmingqi2();
 		aled2y();
 	
 	}
+	}
+	if(final3!=0)
+	{
 	if(final3==num)
 	{
 		afengmingqi3();
 		aled3y();
+	}
 	}
 }
 void main()
 {	
 	while(1)
 	{
-			
+		cejumokuai();	
 	  matrixkeyscan();
-	  cejumokuai();
 	  daozhanjisuan();
 	  daozhantixing();
 
