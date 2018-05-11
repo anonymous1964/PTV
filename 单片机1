@@ -83,25 +83,25 @@ void cejumokuai()				 //小车行驶到哪个车站
 }
 void daozhanjisuan()		//乘客提醒地点计算
 {
-	 if(chengke1==1)
+	 if(chengke1==0)
 	 {
 	 	final1=distance1;
 	 }
 	 else
-	 {
+	 {  
 	 	final1=-1;
 		led1g=0;
 	 }
-	 if(chengke2==1)
+	 if(chengke2==0)
 	 {
-	 	final2=3+distance2;
+	 	final2=4+distance2;
 	 }
 	 else
 	 {
 	 	final2=-1;
 		led2g=0;
 	 }
-	 if(chengke3==1)
+	 if(chengke3==0)
 	 {
 	 	final3=distance3;
 	 }
@@ -121,7 +121,7 @@ void daozhanjisuan()		//乘客提醒地点计算
  }
 void daozhantixing2()			   //乘客和乘务员提醒
 {
-   if(final1==num&&(num!=0)&&(chengke1==1))
+   if(final1==num&&(num!=0)&&(chengke1==0))
    {	
 	if(numt01==0)
 	{
@@ -141,7 +141,7 @@ void daozhantixing2()			   //乘客和乘务员提醒
 	 }
 	 }
    }
-   if(final2==num&&(num!=0)&&(chengke2==1))
+   if(final2==num&&(num!=0)&&(chengke2==0))
    {
    if(numt11==0)
 	{	
