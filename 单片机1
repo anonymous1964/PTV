@@ -2,12 +2,14 @@
 #define uchar unsigned char
 #define uint unsigned int 
 sbit juli=P1^0;
-sbit led1g=P1^1;		   //乘客1绿
-sbit led1r=P1^2;		   //乘客1红
-sbit led2g=P1^3;			//乘客2绿
-sbit led2r=P1^4;			//乘客2红
-sbit led3g=P2^4;			//乘客3绿
-sbit led3r=P2^5;			 //乘客3红
+sbit led1g=P1^1;		   //乘务员1绿
+sbit led1r=P1^2;		   //乘务员1红
+sbit led2g=P1^3;			//乘务员2绿
+sbit led2r=P1^4;			//乘务员2红
+sbit led3g=P2^4;			//乘务员3绿
+sbit led3r=P2^5;			 //乘务员3红 
+sbit led1y=P2^6;			 //乘客1黄
+sbit led2y=P2^7;			 //乘客2黄
 sbit fengmingqi1=P2^1;		  //乘客1蜂鸣器
 sbit fengmingqi2=P2^2;		   //乘客2蜂鸣器
 sbit fengmingqi3=P2^3;		   //乘客3蜂鸣器
@@ -127,6 +129,7 @@ void daozhantixing2()			   //乘客和乘务员提醒
 	 led1r=0;
 	 led1g=0;
 	 afengmingqi1();
+	 led1y=0;
 
 	 }
 	 if(distance1!=0)
@@ -145,6 +148,7 @@ void daozhantixing2()			   //乘客和乘务员提醒
 	 led2r=0;
 	 led2g=0;
 	 afengmingqi2();
+	 led2y=0;
 	 }
 	 if(distance3!=0)
 	 {
@@ -177,7 +181,7 @@ uchar matrixkeyscan()		       //键盘输入
 				case 0xee:distance1=1;break;
 				case 0xde:distance1=2;break;
 				case 0xbe:distance1=3;break;
-				case 0x7e:distance1=0;final1=0;led1r=1;led1g=1;bfengmingqi1();break;
+				case 0x7e:distance1=0;led1y=1;final1=0;led1r=1;led1g=1;bfengmingqi1();break;
 				
 			}
 			while(temp!=0xf0)
@@ -204,7 +208,7 @@ uchar matrixkeyscan()		       //键盘输入
 				case 0xed:distance2=1;break;
 				case 0xdd:distance2=2;break;
 				case 0xbd:distance2=3;break;
-				case 0x7d:distance2=0;final2=0;led2r=1;led2g=1;bfengmingqi2();break;
+				case 0x7d:distance2=0;led2y=1;final2=0;led2r=1;led2g=1;bfengmingqi2();break;
 				
 			}
 			while(temp!=0xf0)
@@ -251,6 +255,7 @@ void main()
 {
 	while(1)
 	{
+
 	init();
 	cejumokuai();
 	delayms(1000);
